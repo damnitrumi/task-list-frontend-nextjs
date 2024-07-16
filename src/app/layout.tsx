@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./styles/globals.css";
 import StyledJsxRegistry from "../lib/styled-components/registry";
+import Image from "next/image";
+
+import LogoImage from "../../public/task-list-logo.png"
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,7 +21,18 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <StyledJsxRegistry>{children}</StyledJsxRegistry>
+        <StyledJsxRegistry>
+          <nav className="flex justify-between items-center bg-backgroundColor text-white p-5">
+            <Image
+              src={LogoImage}
+              alt="Logo Image"
+              width={50}
+              height={50}
+            />
+            <p>Another text here</p>
+          </nav>
+          <main>{children}</main>
+        </StyledJsxRegistry>
       </body>
     </html>
   );
