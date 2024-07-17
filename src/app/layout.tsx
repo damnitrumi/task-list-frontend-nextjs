@@ -20,18 +20,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      {/* Classes no body para que eu consiga fazer o main ocupar o espaço necessário para preencher a tela inteira */}
+      <body className={`${inter.className} min-h-screen flex flex-col`}>
         <StyledJsxRegistry>
-          <nav className="flex justify-between items-center bg-backgroundColor text-white p-5">
+          <nav className="flex justify-center bg-backgroundColor text-white p-5 md:justify-start">
             <Image
               src={LogoImage}
               alt="Logo Image"
               width={50}
               height={50}
             />
-            <p>Another text here</p>
+            {/* <p>Another text here</p> */}
           </nav>
-          <main>{children}</main>
+          <main className="flex flex-col flex-1">{children}</main>
         </StyledJsxRegistry>
       </body>
     </html>
