@@ -1,66 +1,63 @@
 "use client"
 
+import { AuthForm } from "@/components/AuthForm";
+import { handleFetchError } from "@/utils/handleFetchError";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
-
-export type Props = {
-  title?: string;
-};
 
 export type InputProps = {
   login: string;
   password: string;
 }
 
-export default function LoginPage({ title }: Props) {
-  const { register, handleSubmit, formState: { errors } } = useForm({ defaultValues: { login: "", password: "" } });
-  const [invalid, setInvalid] = useState(false);
+const INVALID_CREDENTIALS_ERROR = "Invalid Username or Password!";
 
-  // console.log(errors);
+export default function LoginPage() {
+  const [fetchError, setFetchError] = useState<string>("");
+  const [loggingIn, setLoggingIn] = useState<boolean>(false);
 
   const handleFormSubmit = async (data: any) => {
-    if(invalid){
-      setInvalid(false);
+
+    setLoggingIn(true);
+
+    if (fetchError) {
+      setFetchError("");
     }
+
     try {
-      const response = await fetch("http://localhost:8080/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      const response = await fetchLogin(data);
 
       if (!response.ok) {
-        setInvalid(true);
-        throw new Error("Invalid Username or Password");
+        throw new Error(INVALID_CREDENTIALS_ERROR);
       }
 
       const responseData = await response.text();
 
-      console.log(responseData);
-
       sessionStorage.setItem("token", responseData);
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.log(error.message);
-      }
+        handleFetchError(error, setFetchError, INVALID_CREDENTIALS_ERROR);
+    } finally {
+        setLoggingIn(false);
     }
+  }
 
+  const fetchLogin = async (data: any): Promise<Response> => {
+    return fetch("http://localhost:8080/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
   }
 
   return (
     <div className="flex flex-1 justify-center items-center p-5">
-      <form onSubmit={handleSubmit(handleFormSubmit)} className="flex flex-col gap-5 px-10 py-20 border-[1px] border-black/5 rounded-2xl shadow-sm backdrop-blur-xl bg-white/10">
-        <h1 className="font-bold text-3xl text-center">Login</h1>
-        {invalid && <p className="text-xs text-red-600 text-center">Invalid Username/Password!</p>}
-        <input {...register("login", { required: "Login is required!" })} placeholder="Username" autoFocus className="text-sm px-5 py-2 border-[1px] border-gray-300 rounded-full shadow-md text-background-color bg-gray-100 outline-none placeholder:text-gray-400 focus:bg-white" />
-        {errors.login && <p className="text-xs text-red-600 text-center">{errors.login?.message}</p>}
-        <input type="password" {...register("password", { required: "Password is required!" })} placeholder="Password" className="text-sm px-5 py-2 border-[1px] border-gray-300 rounded-full shadow-md text-background-color bg-gray-100 outline-none placeholder:text-gray-400 focus:bg-white" />
-        {errors.password && <p className="text-xs text-red-600 text-center">{errors.password?.message}</p>}
-        <input type="submit" name="submit" id="submit" value="Log In" className="text-white bg-background-color p-2 border-[1px] border-background-color rounded-full transition-colors duration-300 hover:cursor-pointer hover:bg-white hover:text-background-color" />
-        <p className="text-black text-xs text-center">Don't have an account? Sign Up</p>
-      </form>
+      <AuthForm
+        formName="Login"
+        fetchError={fetchError}
+        loggingIn={loggingIn}
+        handleFormSubmit={handleFormSubmit}
+      />
     </div>
   );
 };
