@@ -1,7 +1,7 @@
 "use client"
 
 import { AuthForm } from "@/components/AuthForm";
-import { handleFetchError } from "@/utils/handleFetchError";
+import { handleFetchError } from "@/lib/utils/handleFetchError";
 import { useState } from "react";
 
 export type InputProps = {
@@ -13,11 +13,11 @@ const INVALID_CREDENTIALS_ERROR = "Invalid Username or Password!";
 
 export default function LoginPage() {
   const [fetchError, setFetchError] = useState<string>("");
-  const [loggingIn, setLoggingIn] = useState<boolean>(false);
+  const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
 
   const handleFormSubmit = async (data: any) => {
 
-    setLoggingIn(true);
+    setIsLoggingIn(true);
 
     if (fetchError) {
       setFetchError("");
@@ -36,7 +36,7 @@ export default function LoginPage() {
     } catch (error: unknown) {
         handleFetchError(error, setFetchError, INVALID_CREDENTIALS_ERROR);
     } finally {
-        setLoggingIn(false);
+      setIsLoggingIn(false);
     }
   }
 
@@ -55,7 +55,7 @@ export default function LoginPage() {
       <AuthForm
         formName="Login"
         fetchError={fetchError}
-        loggingIn={loggingIn}
+        isLoggingIn={isLoggingIn}
         handleFormSubmit={handleFormSubmit}
       />
     </div>
