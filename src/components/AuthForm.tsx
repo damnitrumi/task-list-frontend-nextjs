@@ -8,9 +8,10 @@ type AuthFormProps = {
   isLoggingIn: boolean;
   handleFormSubmit: (data: any) => void;
   formName: string;
+  message?: string;
 }
 
-export const AuthForm: FunctionComponent<AuthFormProps> = ({fetchError, isLoggingIn, handleFormSubmit, formName}: AuthFormProps): JSX.Element => {
+export const AuthForm: FunctionComponent<AuthFormProps> = ({fetchError, isLoggingIn, handleFormSubmit, formName, message = ""}: AuthFormProps): JSX.Element => {
 
   const { register, handleSubmit, formState: { errors } } = useForm({ defaultValues: { login: "", password: "" } });
 
@@ -24,6 +25,7 @@ export const AuthForm: FunctionComponent<AuthFormProps> = ({fetchError, isLoggin
         {errors.password && <p className="text-xs text-red-600 text-center">{errors.password?.message}</p>}
         <input type="submit" name="submit" id="submit" value={formName == "Login" ? "Log In" : "Sign up"} disabled={isLoggingIn} className="text-white bg-background-color p-2 border-[1px] border-background-color rounded-full transition-colors duration-300 hover:cursor-pointer hover:bg-white hover:text-background-color disabled:opacity-20 disabled:pointer-events-none" />
         {formName == "Login" && <p className="text-black text-xs text-center">Don't have an account? <Link href="/signup" className="text-blue-700 hover:underline">Sign Up</Link>.</p>}
+        {message && <p className="text-xs text-blue-600 text-center max-w-48 self-center">{message}</p>}
       </form>
   );
 }
